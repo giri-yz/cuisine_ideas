@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cuisine Ingredient Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7faf2;--surf:#fff;--ink:#13231b;--mut:#5b6b60;--leaf:#1f4d3a;--on:#fff;--tur:#e9a800;--chili:#b8322a;--line:#d5e0ce;--sel:#e3f1e4;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a14;--surf:#17271e;--ink:#eef4ea;--mut:#9fb3a5;--leaf:#6fcf9c;--on:#0f1a14;--tur:#f2b705;--chili:#ff8a7e;--line:#2a4034;--sel:#1f3a2b}}
+:root[data-theme="dark"]{--bg:#0f1a14;--surf:#17271e;--ink:#eef4ea;--mut:#9fb3a5;--leaf:#6fcf9c;--on:#0f1a14;--tur:#f2b705;--chili:#ff8a7e;--line:#2a4034;--sel:#1f3a2b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 "Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+main{max-width:720px;margin:0 auto;padding:20px 16px 110px}
+h1{font-size:clamp(28px,8vw,44px);line-height:1.05;margin:8px 0 6px;font-weight:800;letter-spacing:-.02em;color:var(--leaf)}
+.sub{color:var(--mut);margin:0 0 18px;max-width:46ch}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.tab{flex:1;min-height:46px;border-radius:12px;border:2px solid var(--line);background:var(--surf);font-weight:600}
+.tab[aria-selected="true"]{background:var(--leaf);color:var(--on);border-color:var(--leaf)}
+input[type=search],input[type=text]{width:100%;min-height:46px;padding:0 14px;border-radius:12px;border:2px solid var(--line);background:var(--surf);color:var(--ink);font:inherit}
+:focus-visible{outline:3px solid var(--tur);outline-offset:2px}
+.cats,.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+#cats{display:none}
+.cat{min-height:40px;padding:0 14px;border-radius:20px;border:2px solid var(--line);background:var(--surf)}
+.cat[aria-pressed="true"]{background:var(--tur);border-color:var(--tur);color:#13231b;font-weight:600}
+.dish{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:54px;padding:10px 14px;margin:0 0 8px;text-align:left;background:var(--surf);border:2px solid var(--line);border-radius:12px;font-weight:600}
+.dish small{color:var(--mut);font-weight:400}
+.dish.done{border-color:var(--leaf);background:var(--sel)}
+.dish .tick{color:var(--leaf);font-weight:800}
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.back{min-height:44px;padding:0 14px;border-radius:12px;border:2px solid var(--line);background:var(--surf)}
+.bar h2{margin:0;font-size:24px;line-height:1.1}
+.grp h3{margin:20px 0 0;font-size:15px;color:var(--mut);font-weight:600}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.chip span{display:block;min-height:42px;line-height:38px;padding:0 14px;border-radius:21px;border:2px solid var(--line);background:var(--surf)}
+.chip input:checked+span{background:var(--leaf);border-color:var(--leaf);color:var(--on);font-weight:600}
+.chip input:focus-visible+span{outline:3px solid var(--tur);outline-offset:2px}
+.add{display:flex;gap:8px;margin-top:20px}
+.btn{min-height:46px;padding:0 18px;border-radius:12px;border:2px solid var(--leaf);background:var(--leaf);color:var(--on);font-weight:600}
+.btn.alt{background:var(--surf);color:var(--ink);border-color:var(--line)}
+.btn.del{background:var(--surf);color:var(--chili);border-color:var(--line)}
+.save{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:2px solid var(--line);display:flex;gap:10px;justify-content:center}
+.save .btn{flex:1;max-width:680px}
+.card{background:var(--surf);border:2px solid var(--line);border-radius:14px;padding:14px;margin:0 0 12px}
+.card h4{margin:0 0 4px;font-size:18px}
+.card p{margin:0 0 10px;color:var(--mut)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.empty{padding:28px 16px;text-align:center;color:var(--mut);border:2px dashed var(--line);border-radius:14px}
+.tally{margin:8px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.tally li{padding:3px 10px;border-radius:14px;background:var(--sel);font-size:14px}
+[hidden]{display:none!important}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;z-index:5;max-width:90%}
+</style>
+</head>
+<body>
+<main>
+  <h1>Cuisine ingredient survey</h1>
+  <p class="sub">Pick a cuisine, tick the ingredients it uses, and save. Your answers stay on this phone. Download them when you’re done.</p>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-dishes" aria-selected="true">Cuisines</button>
+    <button class="tab" role="tab" id="t-saved" aria-selected="false">Saved (0)</button>
+  </div>
+
+  <section id="v-dishes">
+    <input type="search" id="dq" placeholder="Search cuisines" aria-label="Search cuisines">
+    <div class="cats" id="cats"></div>
+    <div id="dlist"></div>
+  </section>
+
+  <section id="v-ing" hidden>
+    <div class="bar"><button class="back" id="back">Back</button><h2 id="dtitle"></h2></div>
+    <input type="search" id="iq" placeholder="Search ingredients" aria-label="Search ingredients">
+    <div id="ibox"></div>
+    <div class="add"><input type="text" id="cin" placeholder="Not listed? Type an ingredient" aria-label="Add your own ingredient"><button class="btn alt" id="cadd">Add</button></div>
+  </section>
+
+  <section id="v-saved" hidden></section>
+</main>
+<div class="save" id="savebar" hidden><button class="btn" id="save">Save cuisine</button></div>
+<div id="toast" hidden></div>
+
+<script>
+const DISHES={
+"South Indian":"Idli|Dosa|Sambar|Rasam|Medu Vada|Upma|Pongal|Curd Rice",
+"North Indian":"Butter Chicken|Paneer Butter Masala|Dal Makhani|Chole Bhature|Naan|Aloo Paratha|Rajma",
+"Chinese":"Fried Rice|Hakka Noodles|Manchurian|Chilli Chicken|Spring Rolls|Hot & Sour Soup",
+"Italian":"Pizza|Pasta|Lasagna|Risotto|Minestrone|Bruschetta",
+"Mexican":"Tacos|Burrito|Quesadilla|Guacamole|Nachos|Enchiladas",
+"Thai":"Pad Thai|Green Curry|Tom Yum Soup|Som Tam|Mango Sticky Rice",
+"Japanese":"Sushi|Ramen|Tempura|Miso Soup|Teriyaki",
+"Middle Eastern":"Hummus|Falafel|Shawarma|Tabbouleh|Baba Ganoush",
+"American":"Burger|Mac and Cheese|Pancakes|BBQ Ribs|Caesar Salad"
+};
+const ING={
+"Vegetables":"Vine Tomatoes|Cherry Tomatoes|Red Onions|Spring Onions|Garlic Bulbs|Chilli Peppers|Green Capsicum|Bell Peppers Mix|Organic Carrots|Beetroot|White Radish|Turnip|Cauliflower|Broccoli Head|Purple Cabbage|Cucumber|Celery|Asparagus|Leek|Fennel Bulb|Zucchini|Eggplant|Okra / Ladyfinger|Bitter Gourd|Bitter Melon|Bottle Gourd|Ridge Gourd|Snake Gourd|Pointed Gourd|Pumpkin|Green Beans|French Beans|Long Beans|Cluster Beans|Sweet Corn|Sweet Potato|Taro Root|Yam (Purple)|Lotus Root|Drumstick (Moringa)|Banana Blossom|Banana Flower|Frozen Vegetables",
+"Greens & herbs":"Curry Leaves|Coriander|Mint Leaves|Baby Spinach|Colocasia Leaves|Dried Fenugreek Leaves|Kale Bunch|Pak Choi|Watercress|Butterhead Lettuce|Iceberg Lettuce",
+"Fruits":"Coconut (Fresh)|Lemon|Tamarind|Fresh Bananas|Red Banana|Alphonso Mango|Jackfruit|Papaya|Guava|Pomegranate|Fresh Pineapple|Watermelon|Cantaloupe Melon|Green Apples|Golden Delicious Apples|Orange Navel|Mandarin Oranges|Grape Fruit|Pomelo|Red Grapes|Kiwi Fruit|Strawberries|Blueberries|Raspberries|Cherries|Peaches|Plums|Pear|Apricots|Fig|Dates Medjool|Ripe Avocado|Custard Apple|Sapodilla (Chiku)|Star Fruit|Passion Fruit|Dragon Fruit (White)|Lychee|Longan|Rambutan|Mangosteen|Durian|Soursop|Langsat|Salak|Snake Fruit|Java Apple|Rose Apple|Rose Myrtle|Malay Gooseberry",
+"Grains, pulses & nuts":"Basmati Rice|Brown Rice|Oats (Rolled)|Quinoa|Ragi Flour (Millet)|Tapioca Flour|Yellow Lentils (Toor)|Red Lentils (Masoor)|Mung Beans (Green)|Chickpeas|Raw Peanuts|Cashew Nuts|Almonds|Walnut Kernels|Sesame Seeds (White)|Chia Seeds|Flaxseeds|Pumpkin Seeds|Sunflower Seeds",
+"Spices & seasoning":"Mustard Seeds|Cumin Seeds|Coriander Seeds|Fenugreek Seeds|Dry Red Chilli|Dried Chilli Flakes|Turmeric Powder|Whole Black Pepper|Asafoetida (Hing)|Cardamom (Green)|Cinnamon Sticks|Cloves|Star Anise|Dried Mango Powder|Tamarind Paste|Moringa Powder",
+"Dairy, oils & pantry":"Curd|Butter|Cheese|Paneer Cheese Cubes|Free Range Eggs|Farm Fresh Cow Ghee|Ghee (Cow Milk)|Coconut Milk|Dried Coconut (Kopra)|Cold-Pressed Coconut Oil|Sesame Oil|Groundnut Oil|Peanut Oil|Jaggery (Cane)|Honey (Raw Wildflower)"
+};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const DL=Object.keys(DISHES).map(n=>({n,c:DISHES[n].split('|').join(', ')}));
+const KNOWN=new Set();for(const g in ING)ING[g].split('|').forEach(i=>KNOWN.add(i));
+let saved={},name='',cur=null,sel=new Set(),cat='All',dl=null;
+try{saved=JSON.parse(localStorage.getItem('si-saved')||'{}')}catch(e){}
+try{name=localStorage.getItem('si-name')||''}catch(e){}
+function persist(){try{localStorage.setItem('si-saved',JSON.stringify(saved))}catch(e){toast('This browser blocked saving. Download your answers before leaving.')}}
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2600)}
+
+function show(v){
+  for(const id of ['dishes','ing','saved'])$('#v-'+id).hidden=id!==v;
+  $('#savebar').hidden=v!=='ing';
+  $('#t-dishes').setAttribute('aria-selected',v==='dishes');
+  $('#t-saved').setAttribute('aria-selected',v==='saved');
+  $('.tabs').hidden=v==='ing';
+  if(v==='saved')renderSaved();
+  window.scrollTo(0,0);
+}
+function counts(){$('#t-saved').textContent='Saved ('+Object.keys(saved).length+')'}
+
+/* Dishes */
+function renderCats(){
+  $('#cats').innerHTML=['All',...Object.keys(DISHES)].map(c=>'<button class="cat" data-c="'+esc(c)+'" aria-pressed="'+(c===cat)+'">'+esc(c)+'</button>').join('');
+}
+function renderDishes(){
+  $('#dlist').innerHTML=DL.map(d=>{
+    const s=saved[d.n];
+    return '<button class="dish'+(s?' done':'')+'" data-d="'+esc(d.n)+'" data-c="'+esc(d.c)+'"><span>'+esc(d.n)+'<br><small>'+esc(d.c)+'</small></span>'+(s?'<span class="tick">'+s.length+' saved</span>':'')+'</button>';
+  }).join('')+'<div class="empty" id="dnone" hidden>No cuisine matches. Try another word.</div>';
+  filterDishes();counts();
+}
+function filterDishes(){
+  const q=$('#dq').value.trim().toLowerCase();let n=0;
+  document.querySelectorAll('#dlist .dish').forEach(b=>{
+    const ok=(cat==='All'||b.dataset.c===cat)&&b.dataset.d.toLowerCase().includes(q);
+    b.hidden=!ok;if(ok)n++;
+  });
+  $('#dnone').hidden=n>0;
+}
+$('#dq').addEventListener('input',filterDishes);
+$('#cats').addEventListener('click',e=>{const b=e.target.closest('.cat');if(!b)return;cat=b.dataset.c;renderCats();filterDishes()});
+$('#dlist').addEventListener('click',e=>{const b=e.target.closest('.dish');if(b)openDish(b.dataset.d)});
+
+/* Ingredients */
+const chip=(n,on)=>'<label class="chip" data-n="'+esc(n.toLowerCase())+'"><input type="checkbox" value="'+esc(n)+'"'+(on?' checked':'')+'><span>'+esc(n)+'</span></label>';
+function openDish(d){
+  cur=d;sel=new Set(saved[d]||[]);
+  $('#dtitle').textContent=d;$('#iq').value='';
+  let h='';
+  for(const g in ING)h+='<div class="grp"><h3>'+esc(g)+'</h3><div class="chips">'+ING[g].split('|').map(i=>chip(i,sel.has(i))).join('')+'</div></div>';
+  h+='<div class="grp" id="cgrp"><h3>Added by you</h3><div class="chips" id="cchips">'+[...sel].filter(i=>!KNOWN.has(i)).map(i=>chip(i,true)).join('')+'</div></div>';
+  $('#ibox').innerHTML=h;
+  filterIng();upd();show('ing');
+}
+function upd(){$('#save').textContent='Save '+cur+' ('+sel.size+' ingredient'+(sel.size===1?'':'s')+')'}
+function filterIng(){
+  const q=$('#iq').value.trim().toLowerCase();
+  document.querySelectorAll('#ibox .chip').forEach(l=>l.hidden=!l.dataset.n.includes(q));
+  document.querySelectorAll('#ibox .grp').forEach(g=>g.hidden=!g.querySelector('.chip:not([hidden])'));
+}
+$('#iq').addEventListener('input',filterIng);
+$('#ibox').addEventListener('change',e=>{
+  const i=e.target;if(i.type!=='checkbox')return;
+  i.checked?sel.add(i.value):sel.delete(i.value);upd();
+});
+$('#cadd').addEventListener('click',addCustom);
+$('#cin').addEventListener('keydown',e=>{if(e.key==='Enter')addCustom()});
+function addCustom(){
+  const v=$('#cin').value.trim().slice(0,60);if(!v)return;
+  const ex=[...KNOWN,...sel].find(k=>k.toLowerCase()===v.toLowerCase());
+  const val=ex||v;sel.add(val);
+  document.querySelectorAll('#ibox input').forEach(i=>{if(i.value===val)i.checked=true});
+  if(!ex)$('#cchips').insertAdjacentHTML('beforeend',chip(val,true));
+  $('#cin').value='';$('#iq').value='';filterIng();upd();toast(val+' added');
+}
+$('#back').addEventListener('click',()=>show('dishes'));
+$('#save').addEventListener('click',()=>{
+  if(sel.size){saved[cur]=[...sel];toast(cur+' saved')}else{delete saved[cur];toast('Nothing ticked, so '+cur+' was not saved')}
+  persist();renderDishes();show('dishes');
+});
+
+/* Saved + download */
+function renderSaved(){
+  const keys=Object.keys(saved);const v=$('#v-saved');
+  if(!keys.length){v.innerHTML='<div class="empty">Nothing saved yet. Pick a cuisine and tick its ingredients.</div>';return}
+  const t={};keys.forEach(k=>saved[k].forEach(i=>t[i]=(t[i]||0)+1));
+  const top=Object.entries(t).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).slice(0,8);
+  let h='<div class="card"><h4>Download your answers</h4><p>'+keys.length+' cuisine'+(keys.length===1?'':'s')+' saved.</p>'+
+   '<input type="text" id="nm" placeholder="Your name (optional)" aria-label="Your name" value="'+esc(name)+'" style="margin-bottom:10px">'+
+   '<div class="row">'+(dl?'<button class="btn" data-dl="csv">Download CSV</button><button class="btn alt" data-dl="json">Download JSON</button>':'<span style="color:var(--mut)">Downloads are not available in this view. Open the page in the Claude app or site to download.</span>')+'</div>'+
+   '<ul class="tally" aria-label="Most picked ingredients">'+top.map(x=>'<li>'+esc(x[0])+' ×'+x[1]+'</li>').join('')+'</ul></div>';
+  h+=keys.map(k=>'<div class="card"><h4>'+esc(k)+'</h4><p>'+saved[k].map(esc).join(', ')+'</p><div class="row"><button class="btn alt" data-e="'+esc(k)+'">Edit</button><button class="btn del" data-x="'+esc(k)+'">Remove</button></div></div>').join('');
+  v.innerHTML=h;
+}
+$('#v-saved').addEventListener('input',e=>{if(e.target.id==='nm'){name=e.target.value.slice(0,80);try{localStorage.setItem('si-name',name)}catch(x){}}});
+$('#v-saved').addEventListener('click',async e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.e)return openDish(b.dataset.e);
+  if(b.dataset.x){if(b.dataset.c!=='1'){b.dataset.c='1';b.textContent='Tap again to remove';return}delete saved[b.dataset.x];persist();renderDishes();renderSaved();return}
+  if(b.dataset.dl)download(b.dataset.dl);
+});
+async function download(kind){
+  if(!dl)return;
+  const q=s=>'"'+String(s).replace(/"/g,'""')+'"';
+  let data,file='cuisine-ingredient-survey.'+kind;
+  if(kind==='csv'){
+    data='\ufeffrespondent,cuisine,ingredient\n'+Object.keys(saved).flatMap(k=>saved[k].map(i=>[q(name),q(k),q(i)].join(','))).join('\n');
+  }else{
+    data=JSON.stringify({respondent:name,exported:new Date().toISOString(),cuisines:saved},null,2);
+  }
+  try{await dl.save({filename:file,data});toast('Download ready')}
+  catch(err){if(err&&err.code!=='declined')toast('Download failed. Try again.')}
+}
+
+renderCats();renderDishes();
+(window.claude&&claude.use?claude.use('downloads'):Promise.resolve(null)).then(d=>{dl=d;if(!$('#v-saved').hidden)renderSaved()}).catch(()=>{});
+</script>
+</body>
+</html>
